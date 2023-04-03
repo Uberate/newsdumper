@@ -1,0 +1,9 @@
+[Unit]
+Description=To dump the new from specify websit.
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/newsdumper --dump-path /var/newsdumper/
+
+[Install]
+WantedBy=default.target

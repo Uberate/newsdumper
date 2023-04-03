@@ -1,0 +1,19 @@
+[Unit]
+Description=Scheduler the dumper every 60 minutes.
+
+RefuseManualStart=no
+RefuseManualStop=no
+
+[Timer]
+Persistent=true
+
+# After boot 10 seconds for first time.
+OnBootSec=10
+
+# Run every 1h
+OnUnitActiveSec=3600
+
+Unit=newsdumper.service
+
+[Install]
+WantedBy=timers.target
