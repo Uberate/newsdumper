@@ -110,5 +110,5 @@ func NewSimpleGetGetter(link string, headers map[string]string, resParse func(re
 // ==================================== getters
 
 var NewsGetters = map[string]Getter{
-	"新浪新闻": NewSimpleGetGetter("https://sina-news.vercel.app/rss.json", nil, SinaV1ResParser),
+	"sina_news_v1": NewSimpleGetGetter("https://sina-news.vercel.app/rss.json", nil, SinaV1ResParser),
 }

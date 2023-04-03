@@ -1,0 +1,17 @@
+FROM golang:1.19 as builder
+
+COPY . .
+
+CMD go build -o output/app cmd/main.go
+
+FROM alpine:3.16
+
+WORKDIR /app
+
+CMD mkdir -p "/var/app/output"
+
+COPY --from=builder output/app /app/app
+
+ENV DUMP_PATH="/var/app/output"
+
+RUN app -dump-path $DUMP_PATH
