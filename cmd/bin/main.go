@@ -62,7 +62,7 @@ func init() {
 	parseFlags()
 
 	showAbleFlagPreCheck()
-
+	checkDir()
 }
 
 func parseFlags() {
@@ -102,7 +102,7 @@ func checkDir() {
 	if _, err := os.Stat(OptionsInstance.OutputDir); err != nil {
 		if os.IsNotExist(err) {
 			if OptionsInstance.OutputForce {
-				if err = os.MkdirAll(OptionsInstance.OutputDir, os.ModeDir); err != nil {
+				if err = os.MkdirAll(OptionsInstance.OutputDir, os.ModePerm); err != nil {
 					panic(err)
 				}
 
@@ -233,15 +233,18 @@ func mainLogic(config cfg.Config) {
 			continue
 		}
 
+		fmt.Print("Try to get from getter: ", getterName, ": total: ")
 		newsGroups := map[string][]getter.News{}
 		res, err := item.GetNews(nowTimeSecond)
 		if err != nil {
-			fmt.Printf("Getter [%s] has error: %v", getterName, err)
+			fmt.Printf("\nGetter [%s] has error: %v", getterName, err)
 			continue
 		}
+		fmt.Println(len(res))
 
 		//split group
 		for filterName, filter := range groupKeys {
+			fmt.Print("Match for group: ", filterName, ": count: ")
 			for _, newsItem := range res {
 				for keyWord := range filter {
 					if strings.Contains(newsItem.Title, keyWord) ||
@@ -251,9 +254,11 @@ func mainLogic(config cfg.Config) {
 						}
 
 						newsGroups[filterName] = append(newsGroups[filterName], newsItem)
+						break
 					}
 				}
 			}
+			fmt.Println(len(newsGroups[filterName]))
 		}
 
 		for filterName, news := range newsGroups {
@@ -262,7 +267,7 @@ func mainLogic(config cfg.Config) {
 				fileName = fmt.Sprintf("%s-%s-%s.json", getterName, filterName, nowTimeStr)
 			}
 			if err = utils.WriteToJsonFile(path.Join(OptionsInstance.OutputDir, fileName), news); err != nil {
-				fmt.Println("err")
+				fmt.Println(err)
 			}
 		}
 
@@ -271,7 +276,7 @@ func mainLogic(config cfg.Config) {
 			fileName = fmt.Sprintf("%s-%s-%s.json", getterName, "all", nowTimeStr)
 		}
 		if err = utils.WriteToJsonFile(path.Join(OptionsInstance.OutputDir, fileName), res); err != nil {
-			fmt.Println("err")
+			fmt.Println(err)
 		}
 	}
 }
