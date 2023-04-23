@@ -246,16 +246,24 @@ func mainLogic(config cfg.Config) {
 		for filterName, filter := range groupKeys {
 			fmt.Print("Match for group: ", filterName, ": count: ")
 			for _, newsItem := range res {
+				found := false
 				for keyWord := range filter {
+					if len(keyWord) == 0 {
+						// skip empty filter
+						continue
+					}
 					if strings.Contains(newsItem.Title, keyWord) ||
 						strings.Contains(newsItem.Body, keyWord) {
-						if _, ok := newsGroups[filterName]; !ok {
-							newsGroups[filterName] = []getter.News{}
-						}
-
-						newsGroups[filterName] = append(newsGroups[filterName], newsItem)
-						break
+						found = true
+						newsItem.Label = append(newsItem.Label, keyWord)
 					}
+				}
+				if found {
+					if _, ok := newsGroups[filterName]; !ok {
+						newsGroups[filterName] = []getter.News{}
+					}
+
+					newsGroups[filterName] = append(newsGroups[filterName], newsItem)
 				}
 			}
 			fmt.Println(len(newsGroups[filterName]))

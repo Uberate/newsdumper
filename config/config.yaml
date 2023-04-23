@@ -26,7 +26,7 @@ group_filters:
       - "神经网络"
   - key: "医疗"
     values:
-      - "药物"
+      - "药" # 药 中药 西药 药物 药品
       - "病" # 病 病毒 病原体
       - "癌症"
       - "治愈"
@@ -37,6 +37,42 @@ group_filters:
       - "寿命"
       - "年龄"
       - "医" # 医 医院 医学院 医学生 医生
+  - key: "金融"
+    values:
+      - "股份"
+      - "利润"
+      - "投资"
+      - "营收"
+      - "亏损"
+  - key: "汽车"
+    values:
+      - "汽车"
+      - "车企"
+      - "车展"
+      - "新能源"
+      - "跑车" ## 类型
+      - "房车"
+      - "轿跑"
+      - "宝马" ## 车企，无序
+      - "保时捷"
+      - "宾利"
+      - "五菱宏光"
+      - "比亚迪"
+      - "特斯拉"
+      - "大众"
+      - "一汽大众"
+  - key: "影视"
+    values:
+      - "漫威"
+      - "DC"
+      - "电影"
+      - "电视剧"
+      - "演员"
+      - "歌曲"
+      - "片尾曲"
+      - "片头曲"
+      - "插曲"
+      - "" # TODO
 ### If the article body or title has this key word, these news will group to technology group.
 ### If some article has more than one group key word in different filters, these news will group to these groups.
 

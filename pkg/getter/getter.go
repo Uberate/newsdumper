@@ -10,6 +10,7 @@ type News struct {
 	Body  string
 	Link  string
 	Time  string
+	Label []string
 }
 
 // Getter define a getter to get news.
