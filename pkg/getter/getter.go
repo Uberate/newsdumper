@@ -14,7 +14,7 @@ type News struct {
 
 // Getter define a getter to get news.
 type Getter interface {
-	GetNews(endTime int64) ([]News, error)
+	GetNews(callTime int64) ([]News, error)
 	LastGet() int64
 }
 
