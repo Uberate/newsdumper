@@ -22,4 +22,4 @@ jobs:
         go-version: 1.19
 
     - name: code test
-      run: make test
+      run: go test ./...
