@@ -1,7 +1,11 @@
-.PHONY: build
+.PHONY: test
+test:
+	go test ./...
+
 output:
 	mkdir ./output
 
+.PHONY: build
 build: output
 	go build -o ./output/newsdumper cmd/bin/main.go
 	cp -rf systemds ./output/
