@@ -3,7 +3,7 @@ Description=To dump the new from specify websit.
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/newsdumper --dump-path /var/newsdumper/
+ExecStart=/usr/local/bin/newsdumper -o /var/newsdumper/ -tF
 
 [Install]
 WantedBy=default.target

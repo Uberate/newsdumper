@@ -3,8 +3,9 @@ output:
 	mkdir ./output
 
 build: output
-	go build -o ./output/newsdumper cmd/main.go
-	cp systemds ./output/
+	go build -o ./output/newsdumper cmd/bin/main.go
+	cp -rf systemds ./output/
+	cp makefile output/makefile
 
 .PHONY: clean
 clean:

@@ -5,7 +5,7 @@
 # Quick start with default config
 
 ```shell
-go run cmd/bin/main.go -c ./config/config.yaml -o output/ -F
+go run cmd/bin/main.go -c ./config/config.yaml -o output/ -Ft
 ```
 
 ## Linux
