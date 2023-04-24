@@ -5,11 +5,6 @@ output:
 test:
 	go test ./...
 
-NAME ?= newsdumper
-VERSION ?= $(shell git describe --tags || echo "unknown")
-GO_LDFLAGS='-w -s'
-GOBUILD_CMD=CGO_ENABLE=0 go build -trimpath -ldflags $(GO_LDFLAGS)
-
 .PHONY: build
 build: output
 	go build -o ./output/darwin-amd64-newsdumper cmd/bin/main.go
