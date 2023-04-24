@@ -30,6 +30,7 @@ jobs:
       with:
         tag_name: ${{ github.ref }}
         release_name: Release ${{ github.ref }}
-        body_path: output/*
+        body: |
+          Release of newsdumper.
         draft: false
         prerelease: false
