@@ -1,0 +1,23 @@
+name: go build version
+
+on:
+  push:
+    tags:
+      - v**
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: set up go
+      uses: actions/setup-go@v3
+      with:
+        go-version:1.19
+
+    - name: code test
+      run: go test ./...
+
+    - name: build linux-amd64
+      run: GOOS=linux GOARCH=amd64 go build -o ./output/darwin-amd64-newsdumper cmd/bin/main.go

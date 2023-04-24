@@ -1,13 +1,18 @@
+output:
+	mkdir ./output
+
 .PHONY: test
 test:
 	go test ./...
 
-output:
-	mkdir ./output
+NAME ?= newsdumper
+VERSION ?= $(shell git describe --tags || echo "unknown")
+GO_LDFLAGS='-w -s'
+GOBUILD_CMD=CGO_ENABLE=0 go build -trimpath -ldflags $(GO_LDFLAGS)
 
 .PHONY: build
 build: output
-	go build -o ./output/newsdumper cmd/bin/main.go
+	go build -o ./output/darwin-amd64-newsdumper cmd/bin/main.go
 	cp -rf systemds ./output/
 	cp makefile output/makefile
 
