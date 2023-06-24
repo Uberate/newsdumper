@@ -1,5 +1,7 @@
 FROM golang:1.19 as builder
 
+WORKDIR /app
+
 COPY . .
 
 CMD ["make", "build"]
@@ -8,7 +10,7 @@ FROM alpine:3.16
 
 WORKDIR /app
 
-COPY --from=builder output/newsdumper /app/newsdumper
+COPY --from=builder /app/output/newsdumper /app/newsdumper
 
 ENV OUTOUT_PATH="./"
 ENV RUN_STR="@every 1h"
