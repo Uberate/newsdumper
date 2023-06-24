@@ -26,7 +26,7 @@ ENV RUN_STR="@every 1h"
 ENV CONFIG_PATH="./config/config.yaml"
 ENV ENABLE_FILE_OUTPUT="false"
 
-CMD ["bash", "-c", "./newsdumper --output-dir $DUMP_PATH \
+CMD ["bash", "-c", "mkdir -p $OUTOUT_PATH && ./newsdumper --output-dir $OUTOUT_PATH \
 --enable-output $ENABLE_FILE_OUTPUT \
 --cron-str $RUN_STR \
 --config $CONFIG_PATH"]
