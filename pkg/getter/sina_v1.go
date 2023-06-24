@@ -31,9 +31,10 @@ func SinaV1ResParser(response *http.Response) ([]News, error) {
 
 	for _, item := range news.Items {
 		res = append(res, News{
-			Title: item.Title,
-			Time:  item.DateModified,
-			Link:  item.Url,
+			Title:  item.Title,
+			Time:   item.DateModified,
+			Link:   item.Url,
+			Getter: SinaNewV1, // set getter info.
 		})
 	}
 
