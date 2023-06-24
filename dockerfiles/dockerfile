@@ -1,0 +1,22 @@
+FROM golang:1.19 as builder
+
+WORKDIR /build/output
+WORKDIR /build
+
+COPY . .
+
+RUN ["go", "build", "-o", "./output/newsdumper", "cmd/bin/main.go"]
+
+FROM alpine:3.16
+
+WORKDIR /app
+
+COPY --from=builder /build/output/newsdumper /app/newsdumper
+
+ENV OUTOUT_PATH="./"
+ENV RUN_STR="@every 1h"
+ENV CONFIG_PATH="./config/config.yaml"
+
+CMD ["bash", "-c ", "mkdir -p $DUMP_PATH && ./newsdumper --output-dir $DUMP_PATH \
+--cron-str $RUN_STR \
+--config $CONFIG_PATH"]
