@@ -8,6 +8,7 @@ import (
 	"gopkg.in/yaml.v2"
 	"news/cmd/bin/cfg"
 	"news/pkg/getter"
+	"news/pkg/hooks"
 	"news/pkg/utils"
 	"os"
 	"path"
@@ -213,13 +214,22 @@ func main() {
 		config.DisableGetters = append(config.DisableGetters, item)
 	}
 
+	var hookers []hooks.Hooks
+	for _, item := range config.Hookers {
+		sender, err := hooks.GetHook(item.Type, item.Config)
+		if err != nil {
+			fmt.Printf("init hook err: %s\n", err)
+		}
+		hookers = append(hookers, sender)
+	}
+
 	if len(OptionsInstance.CronStr) == 0 {
-		mainLogic(config)
+		mainLogic(config, hookers)
 	} else {
 		cInstance := cron.New(cron.WithSeconds())
 
 		if _, err := cInstance.AddFunc(OptionsInstance.CronStr, func() {
-			mainLogic(config)
+			mainLogic(config, hookers)
 		}); err != nil {
 			fmt.Println(err)
 		}
@@ -229,7 +239,7 @@ func main() {
 
 }
 
-func mainLogic(config cfg.Config) {
+func mainLogic(config cfg.Config, sender []hooks.Hooks) {
 	nowTime := time.Now()
 	nowTimeSecond := nowTime.Unix()
 	nowTimeStr := nowTime.Format("20060102150405")
@@ -295,6 +305,10 @@ func mainLogic(config cfg.Config) {
 			}
 			if err = utils.WriteToJsonFile(path.Join(OptionsInstance.OutputDir, fileName), news); err != nil {
 				fmt.Println(err)
+			}
+
+			for _, hooker := range sender {
+				hooker.Hook(filterName, news)
 			}
 		}
 

@@ -8,6 +8,11 @@
 go run cmd/bin/main.go -c ./config/config.yaml -o output/ -Ft
 ```
 
+# For docker
+```shell
+docker run -itd --name news-getter 
+```
+
 ## Linux
 
 ### Source code

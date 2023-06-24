@@ -25,6 +25,14 @@ group_filters:
 # If you want to get all getters from the application, start the application with: '-s' or '--show-getters'
 disable_getters:
 - sina_news_v1
+
+hookers:
+- type: smtp-v1
+  receivers: []
+  config:
+    host: <host> 
+    port: <port>
+    username: <send name>
 `
 
 // Config of application.
@@ -34,10 +42,18 @@ type Config struct {
 
 	// DisableWebSites will disable the websites.
 	DisableGetters []string `json:"disable_getters" yaml:"disable_getters"`
+
+	Hookers []Hookers `json:"hookers"`
 }
 
 // MapperSet set a key to a set string.
 type MapperSet struct {
 	Key    string   `json:"key" yaml:"key"`
 	Values []string `json:"values" yaml:"values"`
+}
+
+type Hookers struct {
+	Type      string      `json:"type"`
+	Receivers []string    `json:"receivers"`
+	Config    interface{} `json:"config"`
 }
