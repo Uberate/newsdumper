@@ -2,8 +2,6 @@ FROM golang:1.19 as builder
 
 WORKDIR /app
 
-COPY dockerfiles .
-
 CMD ["make", "build"]
 
 FROM alpine:3.16
