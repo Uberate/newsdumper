@@ -31,4 +31,4 @@ jobs:
         context: .
         push: true
         tags: news-dumper-main
-        file: ./dockerfiles/dockerfile
+        file: dockerfile

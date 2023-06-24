@@ -2,7 +2,7 @@ FROM golang:1.19 as builder
 
 WORKDIR /app
 
-COPY . .
+COPY dockerfiles .
 
 CMD ["make", "build"]
 
