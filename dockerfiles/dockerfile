@@ -10,6 +10,10 @@ WORKDIR /app
 
 COPY --from=builder output/newsdumper /app/newsdumper
 
-ENV DUMP_PATH="/var/newsdumper/"
+ENV OUTOUT_PATH="./"
+ENV RUN_STR="@every 1h"
+ENV CONFIG_PATH="./config/config.yaml"
 
-RUN ["bash", "-c ", "mkdir -p $DUMP_PATH && ./newsdumper -dump-path $DUMP_PATH"]
+RUN ["bash", "-c ", "mkdir -p $DUMP_PATH && ./newsdumper --output-dir $DUMP_PATH \
+--cron-str $RUN_STR \
+--config $CONFIG_PATH"]

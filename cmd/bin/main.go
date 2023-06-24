@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/robfig/cron/v3"
 	"github.com/spf13/pflag"
 	"github.com/uberate/gset"
 	"gopkg.in/yaml.v2"
@@ -44,6 +45,9 @@ type Options struct {
 
 	// DisableGetters will disable specify website getter.
 	DisableGetters []string
+
+	// CronStr define when time(and how long) to run the application.
+	CronStr string
 
 	//=========================== show flags
 
@@ -92,6 +96,9 @@ func parseFlags() {
 		"the news-getters, if enable the show-getters, the application will stop directly.")
 	pflag.BoolVarP(&OptionsInstance.ShowConfigDemo, "show-config-demo", "S", false,
 		"show config demo of application, if enable the show-config-demo, the application will stop directly.")
+	pflag.StringVarP(&OptionsInstance.CronStr, "cron-str", "r", "@every 1h",
+		"set when time(and how long) to run the application, follow the cron flag. Set to empty value will run"+
+			"once.")
 
 	pflag.Parse()
 
@@ -206,8 +213,20 @@ func main() {
 		config.DisableGetters = append(config.DisableGetters, item)
 	}
 
-	// pre done, call mainLogic
-	mainLogic(config)
+	if len(OptionsInstance.CronStr) == 0 {
+		mainLogic(config)
+	} else {
+		cInstance := cron.New(cron.WithSeconds())
+
+		if _, err := cInstance.AddFunc(OptionsInstance.CronStr, func() {
+			mainLogic(config)
+		}); err != nil {
+			fmt.Println(err)
+		}
+
+		cInstance.Run()
+	}
+
 }
 
 func mainLogic(config cfg.Config) {
