@@ -29,6 +29,8 @@ type Options struct {
 	// only group by Filters), else will output to file group by website(and group by filters).
 	AggregateNewsWebSite bool
 
+	EnableOutput bool
+
 	// OutputDir define the output path. If enable the OutputForce, the output dir will be created by tools when it not
 	// exists. The output json file will write to here.
 	// And if output file is exists, it will panic(unless set OutputForce, it will cover old value).
@@ -100,6 +102,8 @@ func parseFlags() {
 	pflag.StringVarP(&OptionsInstance.CronStr, "cron-str", "r", "@every 1h",
 		"set when time(and how long) to run the application, follow the cron flag. Set to empty value will run"+
 			"once.")
+	pflag.BoolVarP(&OptionsInstance.EnableOutput, "enable-output", "", true, "enable"+
+		" output.")
 
 	pflag.Parse()
 
@@ -226,7 +230,7 @@ func main() {
 	if len(OptionsInstance.CronStr) == 0 {
 		mainLogic(config, hookers)
 	} else {
-		cInstance := cron.New(cron.WithSeconds())
+		cInstance := cron.New()
 
 		if _, err := cInstance.AddFunc(OptionsInstance.CronStr, func() {
 			mainLogic(config, hookers)
@@ -299,16 +303,21 @@ func mainLogic(config cfg.Config, sender []hooks.Hooks) {
 		}
 
 		for filterName, news := range newsGroups {
-			fileName := fmt.Sprintf("%s-%s.json", getterName, filterName)
-			if OptionsInstance.OutputWithDateTime {
-				fileName = fmt.Sprintf("%s-%s-%s.json", getterName, filterName, nowTimeStr)
-			}
-			if err = utils.WriteToJsonFile(path.Join(OptionsInstance.OutputDir, fileName), news); err != nil {
-				fmt.Println(err)
+			if OptionsInstance.EnableOutput {
+				fileName := fmt.Sprintf("%s-%s.json", getterName, filterName)
+				if OptionsInstance.OutputWithDateTime {
+					fileName = fmt.Sprintf("%s-%s-%s.json", getterName, filterName, nowTimeStr)
+				}
+				if err = utils.WriteToJsonFile(path.Join(OptionsInstance.OutputDir, fileName), news); err != nil {
+					fmt.Println(err)
+				}
 			}
 
 			for _, hooker := range sender {
-				hooker.Hook(filterName, news)
+				err := hooker.Hook(filterName, news)
+				if err != nil {
+					fmt.Println(err)
+				}
 			}
 		}
 

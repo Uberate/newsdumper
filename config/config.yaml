@@ -81,4 +81,3 @@ group_filters:
 #
 # If you want to get all getters from the application, start the application with: '-s' or '--show-getters'
 disable_getters: [ ]
-
