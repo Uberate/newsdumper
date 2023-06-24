@@ -7,7 +7,7 @@ test:
 
 .PHONY: build
 build: output
-	go build -o ./output/darwin-amd64-newsdumper cmd/bin/main.go
+	go build -o ./output/newsdumper cmd/bin/main.go
 	cp -rf systemds ./output/
 	cp makefile output/makefile
 
