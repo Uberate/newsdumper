@@ -9,7 +9,7 @@ import (
 
 const SMTPHookV1 = "smtp-v1"
 
-func InitSMTPHook(config interface{}) (Hooks, error) {
+func InitSMTPHook(config interface{}) (Hook, error) {
 	o := &SMTPHook{}
 	err := mapstructure.Decode(config, o)
 	return o, err

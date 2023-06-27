@@ -5,9 +5,9 @@ import (
 	"news/pkg/getter"
 )
 
-type InitHook func(config interface{}) (Hooks, error)
+type InitHook func(config interface{}) (Hook, error)
 
-type Hooks interface {
+type Hook interface {
 	Hook(typ string, news []getter.News) error
 }
 
@@ -32,7 +32,7 @@ func init() {
 	Hookers[SMTPHookV1] = InitSMTPHook
 }
 
-func GetHook(typ string, config interface{}) (Hooks, error) {
+func GetHook(typ string, config interface{}) (Hook, error) {
 	if v, ok := Hookers[typ]; ok {
 		res, err := v(config)
 		return res, err

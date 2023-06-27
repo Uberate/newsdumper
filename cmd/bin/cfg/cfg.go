@@ -1,5 +1,10 @@
 package cfg
 
+import (
+	"news/pkg/log"
+	"time"
+)
+
 const ConfigDemo = `## ------------------------------------------------------------------------------------------------------------------ ##
 ## CONFIG DEMO: config.demo.yaml                                                                                      ##
 ##                                                                                                                    ##
@@ -33,17 +38,42 @@ hookers:
     host: <host> 
     port: <port>
     username: <send name>
+getters:
+- kind: sina
+  version: v1
+  name: sina-v1
 `
+
+func DefaultConfig() *Config {
+	return &Config{
+		Log: log.Config{
+			Level:                     "INFO",
+			DisableColor:              false,
+			EnvironmentOverrideColors: false,
+			DisableTimestamp:          false,
+			FullTimestamp:             true,
+			TimestampFormat:           time.RFC3339Nano,
+		},
+	}
+}
 
 // Config of application.
 type Config struct {
+	Log log.Config `json:"log" yaml:"log"`
+
 	// GroupFilters set the keys words to group the news.
 	GroupFilters []MapperSet `json:"group_filters" yaml:"group_filters"`
 
 	// DisableWebSites will disable the websites.
 	DisableGetters []string `json:"disable_getters" yaml:"disable_getters"`
 
-	Hookers []Hookers `json:"hookers"`
+	RunCron string `json:"run_cron" yaml:"run_cron"`
+
+	EnableNotFoundHookers bool          `json:"enable_not_found_hookers" yaml:"enable_not_found_hookers"`
+	Hookers               []FactoryDesc `json:"hookers" yaml:"hookers"`
+
+	EnableNotFoundGetter bool          `json:"enable_not_found_getter" yaml:"enable_not_found_getter"`
+	Getters              []FactoryDesc `json:"getters" yaml:"getters"`
 }
 
 // MapperSet set a key to a set string.
@@ -52,8 +82,9 @@ type MapperSet struct {
 	Values []string `json:"values" yaml:"values"`
 }
 
-type Hookers struct {
-	Type      string      `json:"type"`
-	Receivers []string    `json:"receivers"`
-	Config    interface{} `json:"config"`
+type FactoryDesc struct {
+	Kind    string      `json:"kind,omitempty" yaml:"kind,inline"`
+	Version string      `json:"version,omitempty" yaml:"version,inline"`
+	Name    string      `json:"name,omitempty" yaml:"name,inline"`
+	Config  interface{} `json:"config,omitempty" yaml:"config,inline"`
 }
