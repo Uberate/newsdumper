@@ -28,7 +28,7 @@ type Entity interface {
 	Version() string
 }
 
-type Generator[T Entity] func(name string, config interface{}, logger *logrus.Logger) T
+type Generator[T Entity] func(name string, config interface{}, logger *logrus.Logger) (T, error)
 
 func NewFactor[T Entity](emptyPointer T) *Factory[T] {
 	return &Factory[T]{
@@ -126,14 +126,18 @@ func (f *Factory[T]) ListVersions(kind string) gset.Set[string] {
 	return gset.FromMapKey(f.models[kind])
 }
 
-func (f *Factory[T]) Get(kind, version, name string, config interface{}, logger *logrus.Logger) (T, bool) {
+func (f *Factory[T]) Get(kind, version, name string, config interface{}, logger *logrus.Logger) (T, error, bool) {
 	f.locker.RLock()
 	defer f.locker.RUnlock()
 
 	if g, exists := f.unsafeGetGenerator(kind, version); exists {
-		return g(name, config, logger), true
+		res, err := g(name, config, logger)
+		if err == nil {
+			return res, nil, true
+		}
+		return f.emptyPointer, err, true
 	}
-	return f.emptyPointer, false
+	return f.emptyPointer, nil, false
 }
 
 func (f *Factory[T]) GetGenerator(kind, version string) (Generator[T], bool) {

@@ -1,42 +1,32 @@
 package hooks
 
 import (
-	"fmt"
+	"news/pkg/factory"
 	"news/pkg/getter"
 )
 
-type InitHook func(config interface{}) (Hook, error)
+const V1Str = "v1"
 
 type Hook interface {
+	factory.Entity
 	Hook(typ string, news []getter.News) error
 }
 
-func NewAbsHook(invokeHook func(typ string, news []getter.News) error) *AbsHooks {
-	return &AbsHooks{
-		SendFunction: invokeHook,
-	}
+type EmptyHooker struct {
 }
 
-type AbsHooks struct {
-	SendFunction func(typ string, news []getter.News) error
+func (e EmptyHooker) Kind() string {
+	return ""
 }
 
-func (ah *AbsHooks) Hook(typ string, news []getter.News) error {
-	return ah.SendFunction(typ, news)
+func (e EmptyHooker) Name() string {
+	return ""
 }
 
-var Hookers map[string]InitHook
-
-func init() {
-	Hookers = map[string]InitHook{}
-	Hookers[SMTPHookV1] = InitSMTPHook
+func (e EmptyHooker) Version() string {
+	return ""
 }
 
-func GetHook(typ string, config interface{}) (Hook, error) {
-	if v, ok := Hookers[typ]; ok {
-		res, err := v(config)
-		return res, err
-	}
-
-	return nil, fmt.Errorf("not found type: %s", typ)
+func (e EmptyHooker) Hook(typ string, news []getter.News) error {
+	return nil
 }

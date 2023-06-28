@@ -3,23 +3,49 @@ package hooks
 import (
 	"fmt"
 	"github.com/mitchellh/mapstructure"
+	"github.com/sirupsen/logrus"
 	"net/smtp"
 	"news/pkg/getter"
 )
 
-const SMTPHookV1 = "smtp-v1"
+const SMTPHookKind = "smtp"
 
-func InitSMTPHook(config interface{}) (Hook, error) {
+func GeneratorSMTPHook(name string, config interface{}, logger *logrus.Logger) (Hook, error) {
 	o := &SMTPHook{}
-	err := mapstructure.Decode(config, o)
-	return o, err
+	if err := mapstructure.Decode(config, o); err != nil {
+		return nil, err
+	}
+
+	// check
+	if len(o.Host) == 0 {
+		return nil, fmt.Errorf("SMTP config need host param")
+	}
+
+	o.name = name
+	o.logger = logger
+	return o, nil
 }
 
 type SMTPHook struct {
-	Host      string   `json:"host"`
-	Port      string   `json:"port"`
-	UserName  string   `json:"username"`
-	Receivers []string `json:"receivers"`
+	logger *logrus.Logger
+	name   string
+
+	Host      string   `json:"host" yaml:"host"`
+	Port      string   `json:"port" yaml:"port"`
+	UserName  string   `json:"username" yaml:"userName"`
+	Receivers []string `json:"receivers" yaml:"receivers"`
+}
+
+func (h *SMTPHook) Kind() string {
+	return SMTPHookKind
+}
+
+func (h *SMTPHook) Version() string {
+	return V1Str
+}
+
+func (h *SMTPHook) Name() string {
+	return h.name
 }
 
 func (h *SMTPHook) Hook(typ string, news []getter.News) error {

@@ -61,7 +61,7 @@ func NewAbsNewsGetter(
 	paramGen func(int642 int64) map[string]string, // param gen func
 	resParser func(response *http.Response) ([]News, error), // parser func
 ) factory.Generator[NewsGetter] {
-	return func(name string, config interface{}, logger *logrus.Logger) NewsGetter {
+	return func(name string, config interface{}, logger *logrus.Logger) (NewsGetter, error) {
 		return &AbsNewsGetter{
 			getterName: name,
 			kind:       kind,
@@ -75,7 +75,7 @@ func NewAbsNewsGetter(
 			ParamGen:  paramGen,
 
 			resParser: resParser,
-		}
+		}, nil
 	}
 }
 

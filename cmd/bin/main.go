@@ -75,12 +75,12 @@ func init() {
 func main() {
 	loggerInstance.Info("scan the cron")
 
-	getters, _, err := Load(configInstance, loggerInstance)
+	getters, hookers, err := Load(configInstance, loggerInstance)
 	if err != nil {
 		loggerInstance.Fatalf("run stop: %v", err)
 	}
 
-	if err = Run(getters, nil, configInstance.RunCron, loggerInstance); err != nil {
+	if err = Run(getters, hookers, configInstance.RunCron, loggerInstance); err != nil {
 		loggerInstance.Fatalf("run stop: %v", err)
 	}
 }

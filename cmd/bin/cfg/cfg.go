@@ -24,20 +24,20 @@ group_filters:
 ### If the article body or title has this key word, these news will group to technology group.
 ### If some article has more than one group key word in different filters, these news will group to these groups.
 
-# disable_getters
-# To disable some getters.
-#
-# If you want to get all getters from the application, start the application with: '-s' or '--show-getters'
-disable_getters:
-- sina_news_v1
-
 hookers:
-- type: smtp-v1
-  receivers: []
+- kind: smtp
+  name: email-sender
+  version: v1
   config:
-    host: <host> 
+    host: "host" 
     port: <port>
     username: <send name>
+    receivers: []
+
+# If set enable_not_found_getter false, any not found getter will panic process. 
+enable_not_found_getter: false
+
+# Define which getter will used.
 getters:
 - kind: sina
   version: v1
@@ -63,9 +63,6 @@ type Config struct {
 
 	// GroupFilters set the keys words to group the news.
 	GroupFilters []MapperSet `json:"group_filters" yaml:"group_filters"`
-
-	// DisableWebSites will disable the websites.
-	DisableGetters []string `json:"disable_getters" yaml:"disable_getters"`
 
 	RunCron string `json:"run_cron" yaml:"run_cron"`
 
