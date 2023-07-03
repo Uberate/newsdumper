@@ -8,6 +8,7 @@ import (
 	"news/cmd/bin/cfg"
 	"news/pkg/getter"
 	"news/pkg/hooks"
+	"strings"
 	"time"
 )
 
@@ -31,13 +32,14 @@ func Load(config *cfg.Config, logger *logrus.Logger) ([]getter.NewsGetter, []hoo
 	return getters, hookers, nil
 }
 
-func Run(getters []getter.NewsGetter, hooks []hooks.Hook, runCron string, log *logrus.Logger) error {
+func Run(getters []getter.NewsGetter, hooks []hooks.Hook, runCron string, log *logrus.Logger, groups []cfg.MapperSet) error {
 	cronInstance := cron.New()
 	if _, err := cronInstance.AddFunc(runCron, func() {
 		var newsRes []getter.News
 
 		getTime := time.Now().Unix()
 
+		// get news
 		for _, item := range getters {
 			res, err := item.GetNews(getTime)
 			if err != nil {
@@ -47,11 +49,41 @@ func Run(getters []getter.NewsGetter, hooks []hooks.Hook, runCron string, log *l
 			newsRes = append(newsRes, res...)
 		}
 
+		// news filter
+		types := map[string][]getter.News{}
+		for _, item := range newsRes {
+			for _, groupKey := range groups {
+				if types[groupKey.Key] == nil {
+					types[groupKey.Key] = []getter.News{}
+				}
+				for _, keyWord := range groupKey.Values {
+					if strings.Contains(item.Title, keyWord) {
+						types[groupKey.Key] = append(types[groupKey.Key], item)
+						continue
+					}
+					if strings.Contains(item.Body, keyWord) {
+						types[groupKey.Key] = append(types[groupKey.Key], item)
+						continue
+					}
+				}
+			}
+		}
+
+		for typ, item := range types {
+			log.Debugf("typ: %s, count: %d\n", typ, len(item))
+		}
+
+		// sender
 		for _, item := range hooks {
-			log.Infof("hook: kind: [%s], version: [%s], name: [%s]", item.Kind(), item.Version(), item.Name())
-			err := item.Hook("test", newsRes)
-			if err != nil {
-				log.Error(err)
+			log.Infof("hook: kind: [%s], version: [%s], name: [%s]\n", item.Kind(), item.Version(), item.Name())
+			for typ, news := range types {
+				if len(news) == 0 {
+					continue
+				}
+				err := item.Hook(typ, news)
+				if err != nil {
+					log.Error(err)
+				}
 			}
 		}
 	}); err != nil {

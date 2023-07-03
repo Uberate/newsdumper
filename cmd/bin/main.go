@@ -80,7 +80,7 @@ func main() {
 		loggerInstance.Fatalf("run stop: %v", err)
 	}
 
-	if err = Run(getters, hookers, configInstance.RunCron, loggerInstance); err != nil {
+	if err = Run(getters, hookers, configInstance.RunCron, loggerInstance, configInstance.GroupFilters); err != nil {
 		loggerInstance.Fatalf("run stop: %v", err)
 	}
 }
