@@ -108,6 +108,12 @@ func NewBuilder(logger *logrus.Logger) *Builder {
 	}
 }
 
+func (b *Builder) NextStaged(next Staged) *Builder {
+	b.current.SetNext(next)
+	b.current = next
+	return b
+}
+
 func (b *Builder) Next(name string, f func(ctx context.Context) (context.Context, error), ignoreCurrentError, ignoreNextError bool) *Builder {
 	m := map[string]any{
 		RunFuncKey:         f,

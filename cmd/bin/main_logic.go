@@ -3,13 +3,10 @@ package main
 import (
 	"fmt"
 	"github.com/pkg/errors"
-	"github.com/robfig/cron/v3"
 	"github.com/sirupsen/logrus"
 	"news/cmd/bin/cfg"
 	"news/pkg/getter"
 	"news/pkg/hooks"
-	"strings"
-	"time"
 )
 
 func Load(config *cfg.Config, logger *logrus.Logger) ([]getter.NewsGetter, []hooks.Hook, error) {
@@ -30,68 +27,6 @@ func Load(config *cfg.Config, logger *logrus.Logger) ([]getter.NewsGetter, []hoo
 	}
 
 	return getters, hookers, nil
-}
-
-func Run(getters []getter.NewsGetter, hooks []hooks.Hook, runCron string, log *logrus.Logger, groups []cfg.MapperSet) error {
-	cronInstance := cron.New()
-	if _, err := cronInstance.AddFunc(runCron, func() {
-		var newsRes []getter.News
-
-		getTime := time.Now().Unix()
-
-		// get news
-		for _, item := range getters {
-			res, err := item.GetNews(getTime)
-			if err != nil {
-				log.Error(err)
-				continue
-			}
-			newsRes = append(newsRes, res...)
-		}
-
-		// news filter
-		types := map[string][]getter.News{}
-		for _, item := range newsRes {
-			for _, groupKey := range groups {
-				if types[groupKey.Key] == nil {
-					types[groupKey.Key] = []getter.News{}
-				}
-				for _, keyWord := range groupKey.Values {
-					if strings.Contains(item.Title, keyWord) {
-						types[groupKey.Key] = append(types[groupKey.Key], item)
-						continue
-					}
-					if strings.Contains(item.Body, keyWord) {
-						types[groupKey.Key] = append(types[groupKey.Key], item)
-						continue
-					}
-				}
-			}
-		}
-
-		for typ, item := range types {
-			log.Debugf("typ: %s, count: %d\n", typ, len(item))
-		}
-
-		// sender
-		for _, item := range hooks {
-			log.Infof("hook: kind: [%s], version: [%s], name: [%s]\n", item.Kind(), item.Version(), item.Name())
-			for typ, news := range types {
-				if len(news) == 0 {
-					continue
-				}
-				err := item.Hook(typ, news)
-				if err != nil {
-					log.Error(err)
-				}
-			}
-		}
-	}); err != nil {
-		return err
-	}
-
-	cronInstance.Run()
-	return nil
 }
 
 func loadHooker(hookConfigs []cfg.FactoryDesc, enableNotFound bool, logger *logrus.Logger) ([]hooks.Hook, error) {
