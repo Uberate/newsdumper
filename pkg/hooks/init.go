@@ -1,11 +1,13 @@
 package hooks
 
-import "news/pkg/factory"
+import (
+	"github.com/uberate/gf"
+)
 
-var HookFactory *factory.Factory[Hook]
+var HookFactory *gf.Factory[Hook]
 
 func init() {
-	HookFactory = factory.NewFactor[Hook](&EmptyHooker{})
+	HookFactory = gf.NewFactor[Hook](&EmptyHooker{})
 
 	HookFactory.Registry(SMTPHookKind, V1Str, GeneratorSMTPHook)
 }

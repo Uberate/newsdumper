@@ -1,14 +1,14 @@
 package hooks
 
 import (
-	"news/pkg/factory"
+	"github.com/uberate/gf"
 	"news/pkg/getter"
 )
 
 const V1Str = "v1"
 
 type Hook interface {
-	factory.Entity
+	gf.Entity
 	Hook(typ string, news []getter.News) error
 }
 

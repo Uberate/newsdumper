@@ -2,8 +2,9 @@ package getter
 
 import (
 	"github.com/sirupsen/logrus"
+	"github.com/uberate/gf"
 	"net/http"
-	"news/pkg/factory"
+
 	"strings"
 )
 
@@ -54,13 +55,13 @@ func StableParams(params map[string]string) func(int64) map[string]string {
 }
 
 func NewAbsNewsGetter(
-	kind, version string, // kind and version
-	link, method string, // link and method
-	bodyGen func(int642 int64) string, // body gen func
-	header func(int642 int64) map[string]string, // header gen func
-	paramGen func(int642 int64) map[string]string, // param gen func
+	kind, version string,                                    // kind and version
+	link, method string,                                     // link and method
+	bodyGen func(int642 int64) string,                       // body gen func
+	header func(int642 int64) map[string]string,             // header gen func
+	paramGen func(int642 int64) map[string]string,           // param gen func
 	resParser func(response *http.Response) ([]News, error), // parser func
-) factory.Generator[NewsGetter] {
+) gf.Generator[NewsGetter] {
 	return func(name string, config interface{}, logger *logrus.Logger) (NewsGetter, error) {
 		return &AbsNewsGetter{
 			getterName: name,
@@ -83,7 +84,7 @@ func SimpleNewsGetter(
 	kind, version string,
 	link string,
 	headers map[string]string,
-	resParse func(response *http.Response) ([]News, error)) factory.Generator[NewsGetter] {
+	resParse func(response *http.Response) ([]News, error)) gf.Generator[NewsGetter] {
 	return NewAbsNewsGetter(
 		kind, version,
 		link, http.MethodGet,
