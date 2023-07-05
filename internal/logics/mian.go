@@ -2,7 +2,6 @@ package logics
 
 import (
 	"context"
-	"github.com/robfig/cron/v3"
 	"github.com/sirupsen/logrus"
 	"news/cmd/bin/cfg"
 	"news/pkg/getter"
@@ -35,17 +34,19 @@ func Run(getters []getter.NewsGetter, hooks []hooks.Hook, cronStr string, log *l
 		NextStaged(sendConcurrentStage). // send staged
 		Build()
 
-	cronInstance := cron.New()
-	if _, err := cronInstance.AddFunc(cronStr, func() {
-		err := flow.RunE(ctx)
-		if err != nil {
-			log.Error(err)
-		}
-	}); err != nil {
-		return err
-	}
+	_ = flow.RunE(ctx)
 
-	cronInstance.Run()
+	//cronInstance := cron.New()
+	//if _, err := cronInstance.AddFunc(cronStr, func() {
+	//	err := flow.RunE(ctx)
+	//	if err != nil {
+	//		log.Error(err)
+	//	}
+	//}); err != nil {
+	//	return err
+	//}
+	//
+	//cronInstance.Run()
 
 	return nil
 }
