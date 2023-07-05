@@ -137,6 +137,14 @@ func (b *Builder) Scope(name string) *Builder {
 	return b
 }
 
+func (b *Builder) Concurrent(stageName string, stageds ...Staged) *Builder {
+	cs := NewConcurrentStage(stageName, true, stageds...)
+
+	b.current.SetNext(cs)
+	b.current = cs
+	return b
+}
+
 func (b *Builder) Build() Staged {
 	return b.start
 }

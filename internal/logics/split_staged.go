@@ -2,20 +2,23 @@ package logics
 
 import (
 	"context"
-	"github.com/sirupsen/logrus"
 	"news/cmd/bin/cfg"
 	"news/pkg/getter"
 	"news/pkg/staged"
 	"strings"
 )
 
+// SplitStage
+//
+// Args:
+// - NewsKey
+// - GroupKey
+//
+// Result:
+// - GroupedNewsKey: map[string][]getter.News{}
 func SplitStage(ctx context.Context) (context.Context, error) {
 
-	var defaultLog *logrus.Logger
-	log, ok := staged.GetFromContext(ctx, LoggerInstance, defaultLog)
-	if log == nil {
-		log = logrus.New()
-	}
+	log := LogFromCtx(ctx)
 
 	newsRes, ok := staged.GetFromContext(ctx, NewsKey, []getter.News{})
 	if !ok || len(newsRes) == 0 {

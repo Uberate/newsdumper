@@ -2,18 +2,20 @@ package logics
 
 import (
 	"context"
-	"github.com/sirupsen/logrus"
 	"news/pkg/getter"
 	"news/pkg/hooks"
 	"news/pkg/staged"
 )
 
+// HookerStaged
+//
+// Args:
+// - HookerInstances: []hooks.Hook{}
+// - GroupedNewsKey: map[string][]getter.News{} | FROM split_staged
+//
+// Result:
 func HookerStaged(ctx context.Context) (context.Context, error) {
-	var defaultLog *logrus.Logger
-	log, ok := staged.GetFromContext(ctx, LoggerInstance, defaultLog)
-	if log == nil {
-		log = logrus.New()
-	}
+	log := LogFromCtx(ctx)
 
 	hookers, ok := staged.GetFromContext(ctx, HookerInstances, []hooks.Hook{})
 	if !ok {

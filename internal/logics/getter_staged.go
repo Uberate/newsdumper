@@ -2,24 +2,26 @@ package logics
 
 import (
 	"context"
-	"github.com/sirupsen/logrus"
 	"news/pkg/getter"
 	"news/pkg/staged"
 	"time"
 )
 
+// GetterStaged
+//
+// Args:
+// - CallTime: time.Time | FROM StartStaged
+// - GetterInstances []getter.NewsGetter{} | FROM StartStaged
+//
+// Result:
+// - NewsKey: []getter.News
 func GetterStaged(ctx context.Context) (context.Context, error) {
 	callTime, _ := staged.GetFromContext(ctx, CallTime, time.Now())
+	log := LogFromCtx(ctx)
 
 	getters, ok := staged.GetFromContext(ctx, GetterInstances, []getter.NewsGetter{})
 	if !ok {
 		return ctx, nil
-	}
-
-	var defaultLog *logrus.Logger
-	log, ok := staged.GetFromContext(ctx, LoggerInstance, defaultLog)
-	if log == nil {
-		log = logrus.New()
 	}
 
 	var newsRes []getter.News
