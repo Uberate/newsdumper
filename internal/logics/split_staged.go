@@ -41,11 +41,11 @@ func SplitStage(ctx context.Context) (context.Context, error) {
 				for _, keyWord := range groupKey.Values {
 					if strings.Contains(item.Title, keyWord) {
 						types[groupKey.Key] = append(types[groupKey.Key], item)
-						continue
+						break
 					}
 					if strings.Contains(item.Body, keyWord) {
 						types[groupKey.Key] = append(types[groupKey.Key], item)
-						continue
+						break
 					}
 				}
 			}

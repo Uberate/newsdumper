@@ -89,12 +89,18 @@ getters:
     version: v1
     name: test
 hookers:
-#  - kind: smtp
-#    version: v1
-#    config:
-#      host: 127.0.0.1
-  - kind: lark
+  #  - kind: smtp
+  #    version: v1
+  #    config:
+  #      host: 127.0.0.1
+  #  - kind: lark
+  #    version: v1
+  #    name: lark-invoke
+  #    config:
+  #      host: " lark hook address"
+  - kind: telegram-channel
     version: v1
-    name: lark-invoke
+    name: telegram-invoke
     config:
-      host: " lark hook address"
+      bot_token: "bot token"
+      channel_id: 0 # chat id

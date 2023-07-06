@@ -11,4 +11,5 @@ func init() {
 
 	HookFactory.Registry(SMTPHookKind, V1Str, GeneratorSMTPHook)
 	HookFactory.Registry(LarkHookKind, V1Str, GeneratorLarkHookInstance)
+	HookFactory.Registry(TelegramChannelHookKind, V1Str, GeneratorTelegramChannelHookInstance)
 }

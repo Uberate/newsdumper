@@ -19,7 +19,7 @@ var defaultLarkTemplate = `{
    "elements": [
      {{ range $index, $element := .News }}
 	   {{- if not (eq $index 0) -}} , {{- end -}}
-       {{"tag": "hr"}},
+       {"tag": "hr"},
        {"tag": "div", "text": {"content": "**{{$element.Title}}**", "tag": "lark_md" }},
        {"tag": "action", "actions": [{"tag": "button", "text": {"tag": "plain_text","content": "查看详情"}, "url": "{{$element.Link}}", "type": "primary"}]}
      {{ end }}
@@ -102,10 +102,5 @@ func (l LarkHook) Hook(typ string, news []getter.News) error {
 		}
 		l.logger.Warnf("response err: %v", string(res))
 	}
-	res, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
-	l.logger.Warnf("response err: %v", string(res))
 	return nil
 }
