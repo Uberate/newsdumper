@@ -21,12 +21,6 @@ RUN sed -i 's~dl-cdn.alpinelinux.org~mirrors.aliyun.com~' /etc/apk/repositories 
 
 COPY --from=builder /build/output /app
 
-ENV OUTOUT_PATH="/dump"
-ENV RUN_STR="@every 1h"
 ENV CONFIG_PATH="./config/config.yaml"
-ENV ENABLE_FILE_OUTPUT="false"
 
-CMD ["bash", "-c", "mkdir -p $OUTOUT_PATH && ./newsdumper --output-dir $OUTOUT_PATH \
---enable-output $ENABLE_FILE_OUTPUT \
---cron-str \"$RUN_STR\" \
---config $CONFIG_PATH"]
+CMD ["bash", "-c", "./newsdumper --config $CONFIG_PATH"]
